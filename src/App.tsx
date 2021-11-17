@@ -1,5 +1,6 @@
 import React, { ReactElement, useEffect, useState } from 'react';
 import Slider, { Handle, SliderTooltip } from 'rc-slider';
+import PuffLoader from 'react-spinners/PuffLoader';
 
 import { Container, WeatherContainer } from './styles';
 
@@ -43,12 +44,15 @@ interface ISliderHandleProps {
   ref?: React.Ref<any>;
 }
 
-function App(): ReactElement {
+const App: React.FC = function () {
   const [weather, setWeather] = useState<WeatherType>();
+  const [loading, setLoading] = useState<boolean>(false);
+
   useEffect(() => {
     navigator.geolocation.getCurrentPosition(
       async (position): Promise<void> => {
         try {
+          setLoading(true);
           const { latitude, longitude } = position.coords;
           const locations = await getLocations(latitude, longitude);
 
@@ -59,6 +63,7 @@ function App(): ReactElement {
           console.log('res: ', weatherResponse);
           const currentWeather = weatherResponse.data.consolidated_weather[0];
           setWeather(currentWeather);
+          setLoading(false);
         } catch (e) {
           console.log('e: ', e);
         }
@@ -89,25 +94,34 @@ function App(): ReactElement {
     setWeather({ ...weather, the_temp: value });
   };
 
-  return (
-    <Container bgColor={getColorByTemp(weather?.the_temp)}>
-      <WeatherContainer>
-        <img
-          src={getWeatherIconUrl(weather?.weather_state_abbr)}
-          alt="weather-icon"
+  if (weather) {
+    return (
+      <Container bgColor={getColorByTemp(weather?.the_temp)}>
+        <WeatherContainer>
+          <img
+            width="100"
+            height="100"
+            src={getWeatherIconUrl(weather?.weather_state_abbr)}
+            alt="weather-icon"
+          />
+        </WeatherContainer>
+        <Slider
+          className="slider"
+          min={-50}
+          max={50}
+          value={Math.round(weather?.the_temp || 0)}
+          handle={handle}
+          onChange={handleChange}
         />
-        <br />
-        <p>{weather?.the_temp}</p>
-      </WeatherContainer>
-      <Slider
-        className="slider"
-        min={-50}
-        max={50}
-        handle={handle}
-        onChange={handleChange}
-      />
+      </Container>
+    );
+  }
+
+  return (
+    <Container>
+      <PuffLoader color="#36D7B7" loading={loading} size={60} />
     </Container>
   );
-}
+};
 
 export default App;
