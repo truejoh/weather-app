@@ -1,25 +1,57 @@
-import React, { ReactElement } from 'react';
-import logo from './logo.svg';
+import React, { ReactElement, useEffect, useState } from 'react';
+
 import './App.css';
+import { getWeatherIconUrl } from './utils/helper';
+import { getLocations, getWeather } from './api/apis';
+import { Container } from './styles';
+
+// eslint-disable
+type WeatherType = {
+  id: number;
+  applicable_date: Date;
+  weather_state_name: string;
+  weather_state_abbr: string;
+  wind_speed: number;
+  wind_direction: number;
+  wind_direction_compass: string;
+  min_temp: number;
+  max_temp: number;
+  the_temp: number;
+};
 
 function App(): ReactElement {
+  const [weather, setWeather] = useState<WeatherType>();
+  useEffect(() => {
+    navigator.geolocation.getCurrentPosition(
+      async (position): Promise<void> => {
+        try {
+          const { latitude, longitude } = position.coords;
+          const locations = await getLocations(latitude, longitude);
+
+          const { woeid } = locations.data[0];
+
+          const weatherResponse = await getWeather(woeid);
+
+          console.log('res: ', weatherResponse);
+          const currentWeather = weatherResponse.data.consolidated_weather[0];
+          setWeather(currentWeather);
+        } catch (e) {
+          console.log('e: ', e);
+        }
+      },
+      (): void => {
+        alert('deny');
+      },
+    );
+  }, []);
+
   return (
-    <div className="App">
-      <header className="App-header">
-        <img src={logo} className="App-logo" alt="logo" />
-        <p>
-          Edit <code>src/App.tsx</code> and save to reload.
-        </p>
-        <a
-          className="App-link"
-          href="https://reactjs.org"
-          target="_blank"
-          rel="noopener noreferrer"
-        >
-          Learn React
-        </a>
-      </header>
-    </div>
+    <Container>
+      <img
+        src={getWeatherIconUrl(weather?.weather_state_abbr)}
+        alt="weather-icon"
+      />
+    </Container>
   );
 }
 
