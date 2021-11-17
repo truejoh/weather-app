@@ -4,7 +4,6 @@ import PuffLoader from 'react-spinners/PuffLoader';
 
 import { Container, WeatherContainer, Error } from './styles';
 
-import './App.css';
 import 'rc-slider/assets/index.css';
 
 import { getColorByTemp, getWeatherIconUrl } from './utils/helper';
@@ -61,7 +60,6 @@ const App: React.FC = function () {
 
           const weatherResponse = await getWeather(woeid);
 
-          console.log('res: ', weatherResponse);
           const currentWeather = weatherResponse.data.consolidated_weather[0];
           setWeather(currentWeather);
           setLoading(false);
@@ -113,7 +111,6 @@ const App: React.FC = function () {
             src={getWeatherIconUrl(weather?.weather_state_abbr)}
             alt="weather-icon"
           />
-
           <p>{Math.round(weather.the_temp || 0)}&nbsp;&#8451;</p>
         </WeatherContainer>
         <Slider
