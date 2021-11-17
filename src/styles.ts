@@ -16,4 +16,15 @@ export const Container = styled.div<{ bgColor?: string }>`
   }
 `;
 
-export const WeatherContainer = styled.div``;
+export const Error = styled.div`
+  font-size: 24px;
+  color: red;
+`;
+
+export const WeatherContainer = styled.div`
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  font-size: 24px;
+`;
