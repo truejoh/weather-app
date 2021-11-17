@@ -1,9 +1,11 @@
 import React, { ReactElement, useEffect, useState } from 'react';
 
-import './App.css';
-import { getWeatherIconUrl } from './utils/helper';
-import { getLocations, getWeather } from './api/apis';
 import { Container } from './styles';
+
+import './App.css';
+
+import { getColorByTemp, getWeatherIconUrl } from './utils/helper';
+import { getLocations, getWeather } from './api/apis';
 
 // eslint-disable
 type WeatherType = {
@@ -46,7 +48,8 @@ function App(): ReactElement {
   }, []);
 
   return (
-    <Container>
+    <Container bgColor={getColorByTemp(weather?.the_temp)}>
+      <p>{weather?.the_temp}</p>
       <img
         src={getWeatherIconUrl(weather?.weather_state_abbr)}
         alt="weather-icon"
