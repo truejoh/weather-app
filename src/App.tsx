@@ -9,7 +9,6 @@ import 'rc-slider/assets/index.css';
 import { getColorByTemp, getWeatherIconUrl } from './utils/helper';
 import { getLocations, getWeather } from './api/apis';
 
-// eslint-disable
 type WeatherType = {
   id?: number;
   applicable_date?: Date;
